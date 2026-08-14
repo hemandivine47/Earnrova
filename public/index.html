@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Earnrova</title>
+<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">E</div><div><strong>Earnrova</strong><small>Watch • Earn • Grow</small></div></div>
+  <button class="icon-btn" id="refreshBtn">↻</button>
+</header>
+
+<main id="view">
+  <section class="notice">📣 <b>Don't miss today's earnings!</b> 💰</section>
+  <section class="balance-card">
+    <div class="tier">🏅 Gold</div>
+    <div class="label">Your Balance</div>
+    <div class="balance"><span id="balance">$0.00</span></div>
+    <div class="ads-line">▣ Today's ads: <span id="adsToday">0</span>/50</div>
+  </section>
+
+  <section class="quick-grid">
+    <button class="quick" data-view="home"><span>✓</span><b>Check-in</b></button>
+    <button class="quick" id="spinBtn"><span>✣</span><b>Spin</b></button>
+    <button class="quick" data-view="tasks"><span>☷</span><b>Tasks</b></button>
+    <button class="quick" data-view="refer"><span>♧</span><b>Refer</b></button>
+  </section>
+
+  <section class="stats">
+    <div><small>Total Earned</small><strong id="earned">$0.00</strong></div>
+    <div><small>Referrals</small><strong id="referrals">0</strong></div>
+  </section>
+
+  <h2>▣ DAILY CHECK-IN STREAK</h2>
+  <section class="streak" id="streak"></section>
+
+  <section id="homeExtra" class="card">
+    <h3>Welcome to Earnrova</h3>
+    <p>Complete genuine tasks, watch available rewarded ads, and build your balance.</p>
+    <p class="muted">Minimum withdrawal: <b>$20.00</b></p>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav active" data-view="home"><span>⌂</span>Home</button>
+  <button class="nav" data-view="refer"><span>♧</span>Team</button>
+  <button class="nav" data-view="tasks"><span>☷</span>Tasks</button>
+  <button class="nav" data-view="board"><span>♜</span>Board</button>
+  <button class="nav" data-view="wallet"><span>▣</span>Wallet</button>
+</nav>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
