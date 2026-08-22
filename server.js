@@ -20,7 +20,7 @@ function validateInitData(initData){
   if(!BOT_TOKEN)throw new Error('BOT_TOKEN is not configured');
   const p=new URLSearchParams(initData),hash=p.get('hash');if(!hash)throw new Error('Missing Telegram initData');
   const pairs=[];for(const [k,v] of p.entries())if(k!=='hash')pairs.push(`${k}=${v}`);pairs.sort();
-  const secret=crypto.createHash('sha256').update(BOT_TOKEN).digest();
+  const secret=crypto.createHmac('sha256','WebAppData').update(BOT_TOKEN).digest();
   const calc=crypto.createHmac('sha256',secret).update(pairs.join('\n')).digest('hex');
   if(!crypto.timingSafeEqual(Buffer.from(calc),Buffer.from(hash)))throw new Error('Invalid Telegram session');
   const user=JSON.parse(p.get('user')||'{}');if(!user.id)throw new Error('Missing Telegram user');return user;
@@ -68,14 +68,7 @@ app.post('/webhook',async(req,res)=>{
   }
 });
 
-app.post('/api/me',(req,res)=>{
-  try{
-    res.json(publicUser(getUser(req.body.initData||'')))
-  }catch(e){
-    console.log('api/me error:',e.message,'initData length:',(req.body.initData||'').length);
-    res.status(401).json({error:e.message})
-  }
-});
+app.post('/api/me',(req,res)=>{try{res.json(publicUser(getUser(req.body.initData||'')))}catch(e){console.log('api/me error:',e.message,'initData length:',(req.body.initData||'').length);res.status(401).json({error:e.message})}});
 app.post('/api/ads/complete',(req,res)=>{
   try{
     const u=getUser(req.body.initData||'');
@@ -85,10 +78,7 @@ app.post('/api/ads/complete',(req,res)=>{
     }
     u.adsInWindow++;u.balance=+(u.balance+REWARD).toFixed(2);u.totalEarned=+(u.totalEarned+REWARD).toFixed(2);
     save();res.json(publicUser(u));
-  }catch(e){
-    console.log('api/ads/complete error:',e.message,'initData length:',(req.body.initData||'').length);
-    res.status(400).json({error:e.message})
-  }
+  }catch(e){console.log('api/ads/complete error:',e.message,'initData length:',(req.body.initData||'').length);res.status(400).json({error:e.message})}
 });
 app.post('/api/withdraw',(req,res)=>{
   try{
