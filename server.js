@@ -1,4 +1,4 @@
-import express from 'express';
+    import express from 'express';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
@@ -89,4 +89,5 @@ app.post('/api/withdraw',(req,res)=>{
     u.balance=0;save();res.json(publicUser(u));
   }catch(e){res.status(400).json({error:e.message})}
 });
-app.use((req,res)=>
+app.use((req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
+app.listen(PORT,()=>console.log(`Earnrova running on port ${PORT}`));
