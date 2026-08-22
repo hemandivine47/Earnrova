@@ -1,4 +1,4 @@
-    import express from 'express';
+import express from 'express';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
@@ -68,7 +68,14 @@ app.post('/webhook',async(req,res)=>{
   }
 });
 
-app.post('/api/me',(req,res)=>{try{res.json(publicUser(getUser(req.body.initData||'')))}catch(e){res.status(401).json({error:e.message})}});
+app.post('/api/me',(req,res)=>{
+  try{
+    res.json(publicUser(getUser(req.body.initData||'')))
+  }catch(e){
+    console.log('api/me error:',e.message,'initData length:',(req.body.initData||'').length);
+    res.status(401).json({error:e.message})
+  }
+});
 app.post('/api/ads/complete',(req,res)=>{
   try{
     const u=getUser(req.body.initData||'');
@@ -78,7 +85,10 @@ app.post('/api/ads/complete',(req,res)=>{
     }
     u.adsInWindow++;u.balance=+(u.balance+REWARD).toFixed(2);u.totalEarned=+(u.totalEarned+REWARD).toFixed(2);
     save();res.json(publicUser(u));
-  }catch(e){res.status(400).json({error:e.message})}
+  }catch(e){
+    console.log('api/ads/complete error:',e.message,'initData length:',(req.body.initData||'').length);
+    res.status(400).json({error:e.message})
+  }
 });
 app.post('/api/withdraw',(req,res)=>{
   try{
