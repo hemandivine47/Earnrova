@@ -42,40 +42,30 @@ function publicUser(x){
     remainingMs:Math.max(0,AD_WINDOW_MS-(Date.now()-x.adsWindowStart))};
 }
 
-app.post('/webhook',(req,res)=>{
+// Telegram bot webhook
+app.post('/webhook',async(req,res)=>{
   res.sendStatus(200);
-  (async()=>{
-    try{
-      const msg=req.body?.message;
-      console.log('Webhook received:',JSON.stringify(req.body));
-      if(!msg){console.log('No message in update');return}
-      if(!BOT_TOKEN){console.log('BOT_TOKEN missing, cannot reply');return}
-      const chatId=msg.chat.id;
-      const text=msg.text||'';
-      if(text.startsWith('/start')){
-        const firstName=msg.from?.first_name||'there';
-        console.log('Sending welcome message to',chatId,'APP_URL is',APP_URL);
-        const r=await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            chat_id:chatId,
-            text:`👋 Welcome to Earnrova, ${firstName}!\n\n💰 Watch ads, earn rewards, and cash out.\n\nTap the button below to open the app:`,
-            reply_markup:{
-              inline_keyboard:[[{
-                text:'🚀 Open Earnrova',
-                web_app:{url:APP_URL}
-              }]]
-            }
-          })
-        });
-        const data=await r.json();
-        console.log('Telegram sendMessage response:',JSON.stringify(data));
-      }
-    }catch(err){
-      console.error('Webhook handler error:',err);
-    }
-  })();
+  const msg=req.body?.message;
+  if(!msg||!BOT_TOKEN)return;
+  const chatId=msg.chat.id;
+  const text=msg.text||'';
+  if(text.startsWith('/start')){
+    const firstName=msg.from?.first_name||'there';
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        chat_id:chatId,
+        text:`👋 Welcome to Earnrova, ${firstName}!\n\n💰 Watch ads, earn rewards, and cash out.\n\nTap the button below to open the app:`,
+        reply_markup:{
+          inline_keyboard:[[{
+            text:'🚀 Open Earnrova',
+            web_app:{url:APP_URL}
+          }]]
+        }
+      })
+    });
+  }
 });
 
 app.post('/api/me',(req,res)=>{try{res.json(publicUser(getUser(req.body.initData||'')))}catch(e){res.status(401).json({error:e.message})}});
@@ -99,5 +89,4 @@ app.post('/api/withdraw',(req,res)=>{
     u.balance=0;save();res.json(publicUser(u));
   }catch(e){res.status(400).json({error:e.message})}
 });
-app.use((req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
-app.listen(PORT,()=>console.log(`Earnrova running on port ${PORT}`));
+app.use((req,res)=>
