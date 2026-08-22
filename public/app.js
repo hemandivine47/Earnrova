@@ -7,10 +7,13 @@ function toast(t){const e=document.createElement('div');e.className='toast';e.te
 function formatTime(ms){let n=Math.max(0,Math.ceil(ms/1000));let h=Math.floor(n/3600),m=Math.floor(n%3600/60),s=n%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
 function remaining(){return Math.max(0,CONFIG.windowMs-(Date.now()-Number(state.adsWindowStart||Date.now())))}
 function render(){
-  $('balance').textContent=money(state.balance);$('earned').textContent=money(state.totalEarned);
-  $('adsToday').textContent=state.adsInWindow;$('referrals').textContent=state.referrals;
+  const balEl=$('balance');if(balEl)balEl.textContent=money(state.balance);
+  const earnEl=$('earned');if(earnEl)earnEl.textContent=money(state.totalEarned);
+  const adsEl=$('adsToday');if(adsEl)adsEl.textContent=state.adsInWindow;
+  const refEl=$('referrals');if(refEl)refEl.textContent=state.referrals;
   const r=$('adReset');if(r)r.textContent=remaining()<=0?'Resetting…':`Next reset in ${formatTime(remaining())}`;
-  const s=$('streak');s.innerHTML='';for(let i=1;i<=7;i++){const d=document.createElement('div');d.className='day '+(i<=state.streak?'active':'');d.innerHTML=`<b>${i}</b>DAY ${i}`;s.appendChild(d)}
+  const taskR=$('taskReset');if(taskR)taskR.textContent=remaining()<=0?'Resetting…':`Next reset in ${formatTime(remaining())}`;
+  const s=$('streak');if(s){s.innerHTML='';for(let i=1;i<=7;i++){const d=document.createElement('div');d.className='day '+(i<=state.streak?'active':'');d.innerHTML=`<b>${i}</b>DAY ${i}`;s.appendChild(d)}}
 }
 async function api(path,opts={}){const r=await fetch('/api'+path,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok){const d=await r.json().catch(()=>({}));const e=new Error(d.error||'Request failed');e.remainingMs=d.remainingMs;throw e}return r.json()}
 async function load(){try{state=await api('/me',{method:'POST',body:JSON.stringify({initData:tg?.initData||''})});render()}catch(e){render();toast('Connect the deployed Telegram Mini App to save your account.')}}
